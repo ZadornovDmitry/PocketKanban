@@ -6,5 +6,6 @@
         <file>main_listview/SwipeViewDelegate.qml</file>
         <file>board_listviews/TodoListView.qml</file>
         <file>screepts/CreateDatabase.js</file>
+        <file>main_listview/CreateBoardDialog.qml</file>
     </qresource>
 </RCC>

@@ -1,4 +1,6 @@
 var db_ = 0;
+var data = 0;
+
 
 function getDatabase()
 {

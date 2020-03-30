@@ -34,13 +34,13 @@ ListView {
                         var tasks = tx.executeSql("select name from tasks");
                         for (var i = 0; i < tasks.rows.length; i++) {
                             todoModel.append
-                            ({
-                                 'value': tasks.rows.item(i).name
-                            })
+                                    ({
+                                         'value': tasks.rows.item(i).name
+                                     })
                             console.log(tasks.rows.item(i).name);
                         }
                     }
-                    )
+                    );
 
     }
 }

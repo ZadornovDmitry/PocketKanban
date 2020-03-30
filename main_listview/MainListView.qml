@@ -2,7 +2,11 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
+import QtQuick.LocalStorage 2.12 as Sql
+import "../screepts/CreateDatabase.js" as Database
+
 Item{
+
 
     ListView{
         id: mainListView
@@ -55,14 +59,88 @@ Item{
                     }
                 }
                 ComboBox {
-                    id: cb_boards
+                    id: cb_boards// combobox with list of boards
                     width:parent.width/3
                     height: parent.height
                     Material.background: Material.Blue
                     Material.foreground: Material.White
                     flat: true
 
-                    model: [ "Banana", "Apple", "Coconut" ]
+                    model: ListModel{ id: boards_model }
+
+                    function updateModel(){// reading from databse and refill model with new data
+                        var db = Database.getDatabase();
+
+                        db.transaction(
+                                    function(tx) {
+                                        var tasks = tx.executeSql("select name from boards");
+                                        boards_model.clear();
+
+                                        for (var i = 0; i < tasks.rows.length; i++) {
+                                            boards_model.append
+                                                    ({
+                                                         value: tasks.rows.item(i).name
+
+                                                     })
+                                            console.log(tasks.rows.item(i).name);
+                                        }
+                                        boards_model.append// for creating new board. Have to be allways in end of list
+                                                ({
+                                                     value: "Создать доску..."
+                                                 })
+                                    }
+                                    );
+                        cb_boards.findActiveBoard();
+                    }
+
+                    function findActiveBoard(){
+                        var db = Database.getDatabase();
+                        var activeBoard;
+                        db.transaction(
+                                    function(tx) {
+                                        // finding active board that was selected in last time
+                                        activeBoard = tx.executeSql("select b.name from Boards as b where b.board_id = (select a.board_id from ActiveBoard as a)").rows.item(0).name;
+                                    }
+                                    );
+                        // setting active board to current index
+                        currentIndex = find(activeBoard);
+                    }
+
+                    Component.onCompleted: {
+                        cb_boards.updateModel()
+                    }
+                    onCurrentIndexChanged: {// if creating new board choosen show dialog
+                        if (currentIndex == boards_model.rowCount()-1)
+                            window.createBoardDialogLoader_.sourceComponent = createBoardDialog
+                    }
+                    Component{
+                        id: createBoardDialog
+
+                        CreateBoardDialog{
+
+                            onRejected: {
+                                cb_boards.findActiveBoard();
+                                window.createBoardDialogLoader_.sourceComponent = undefined
+                            }
+                            onAccepted: {
+
+                                var db = Database.getDatabase();
+                                var activeBoardId;
+                                db.transaction(
+                                            function(tx) {
+                                                activeBoardId = tx.executeSql("insert into Boards values(?,?)", ["",boardName]);
+                                                //activeBoardId = tx.executeSql("SELECT MAX(board_id) FROM boards;").rows.item[0].max
+                                                var sql = "update ActiveBoard set board_id=" + activeBoardId.insertId + " where id = 1"
+                                                console.log(sql);
+                                                tx.executeSql(sql);
+
+                                            }
+                                )
+                                cb_boards.updateModel();
+                                window.createBoardDialogLoader_.sourceComponent = undefined
+                            }
+                        }
+                    }
                 }
                 Item{
                     height: parent.height
