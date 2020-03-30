@@ -55,7 +55,7 @@ Item{
                     }
                 }
                 ComboBox {
-                    id: cb
+                    id: cb_boards
                     width:parent.width/3
                     height: parent.height
                     Material.background: Material.Blue
@@ -66,7 +66,7 @@ Item{
                 }
                 Item{
                     height: parent.height
-                    width:mainListView.width - cb.width - (parent.height*2)-70
+                    width:mainListView.width - cb_boards.width - (parent.height*2)-70
                 }
 
                 Rectangle{

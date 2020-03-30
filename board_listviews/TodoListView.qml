@@ -27,8 +27,7 @@ ListView {
 
     Component.onCompleted: {
 
-
-        var db = Sql.LocalStorage.openDatabaseSync("Kanban", "1.0", "Kanban tables and tasks", 1000000, function callback(db){CreateDatabase.createDb(db);});
+        var db = CreateDatabase.getDatabase();
 
         db.transaction(
                     function(tx) {
@@ -37,7 +36,6 @@ ListView {
                             todoModel.append
                             ({
                                  'value': tasks.rows.item(i).name
-
                             })
                             console.log(tasks.rows.item(i).name);
                         }
