@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.12 as Sql
 import "main_listview"
@@ -11,7 +11,7 @@ ApplicationWindow {
     property alias dialogLoader_: dialogLoader
     visible: true
     width: 1080
-    height: 1920
+    height: 700
 
     title: qsTr("Pocket Kanban")
 
@@ -31,4 +31,6 @@ ApplicationWindow {
 
 
     MainListView{/*width: window.width; height: window.height;*/ anchors.fill:parent}
+
+
 }

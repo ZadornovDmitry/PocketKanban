@@ -5,11 +5,12 @@ import "../board_listviews"
 
 Item{
     property var contentHeigh: 0
+    property alias tabBar:tabBar_
     width:parent.width
     height: swipeView.height
 
     TabBar {
-        id: tabBar
+        id: tabBar_
         currentIndex: swipeView.currentIndex
         width: parent.width
         anchors.top: parent.top
@@ -25,14 +26,15 @@ Item{
         TabButton {
             text: qsTr("сделано")
         }
+
     }
 
     SwipeView {
         id: swipeView
         width: parent.width
         height: contentHeigh
-        anchors.top: tabBar.bottom
-        currentIndex: tabBar.currentIndex
+        anchors.top: tabBar_.bottom
+        currentIndex: tabBar_.currentIndex
 
         Item {
             id: firstPage

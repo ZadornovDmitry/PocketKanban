@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import QtQuick.LocalStorage 2.12 as Sql
@@ -282,8 +282,60 @@ Item{
         }
         headerPositioning: ListView.PullBackHeader
         model:[1]
-        delegate: SwipeViewDelegate{contentHeigh: mainListView.height}
+        delegate: swipeDelegate
         snapMode: ListView.SnapToItem
         boundsBehavior: Flickable.StopAtBounds
+
+
+    }
+Component{
+    id: swipeDelegate
+    SwipeViewDelegate{
+        id:swipe
+        contentHeigh: mainListView.height
+        Connections{
+            target: swipe.tabBar
+            onCurrentIndexChanged:{
+                addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'unvisible';
+            }
+        }
+    }
+
+}
+
+    RoundButton{
+        id: addTaskBtn
+        radius: parent.height*0.2
+        width: parent.height*0.12
+        height: parent.height*0.12
+        x: window.width-width-20
+        y: window.height-height-20
+        text: "+"
+        Material.foreground: "blue"
+        Material.background: "light blue"
+        font.pixelSize: 45
+        transitions: [Transition {
+                from: ""
+                to: "unvisible"
+                NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 200}
+                NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 300}
+            },
+            Transition {
+                            from: "unvisible"
+                            to: ""
+                            NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 200}
+                            NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 300}
+                        }]
+        states: [State {
+                name: "unvisible"
+                PropertyChanges {
+                    target: addTaskBtn
+                    x:window.width-width-20-width/2
+                    y:window.height-height-20-width/2
+                    height: 0
+                    width:0
+
+                }
+            }]
     }
 }
