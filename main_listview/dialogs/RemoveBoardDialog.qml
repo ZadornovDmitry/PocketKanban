@@ -8,7 +8,7 @@ Dialog {
     anchors.centerIn: parent
 
     height: 200
-    width: label.contentWidth + 50
+    width: footer.implicitWidth + label.contentWidth/2
     visible: true
     modal: true
     standardButtons: Dialog.Save | Dialog.Cancel
@@ -16,14 +16,16 @@ Dialog {
     title:  qsTr("Удаление доски")
     Component.onCompleted: {
         standardButton(Dialog.Cancel).text = qsTr("Отменить");
-        standardButton(Dialog.Ok).text = qsTr("Удалить");
+        standardButton(Dialog.Save).text = qsTr("Удалить");
     }
         Label{
             id: label
             anchors.centerIn: parent
             width: parent.width
-            text: qsTr("Удалить доску \"" + boardName + "\"? Все активные задачи будут удалены.
-Архивированные задачи будут показаны на экране История")
+            text: qsTr("Удалить доску \"" + boardName + "\"? Все активные
+задачи будут удалены.
+Архивированные задачи будут
+показаны на экране История.")
         }
 
 

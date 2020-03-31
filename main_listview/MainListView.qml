@@ -60,7 +60,8 @@ Item{
                 }
                 ComboBox {
                     id: cb_boards// combobox with list of boards
-                    width:parent.width/3
+                    width:parent.width/2
+
                     height: parent.height
                     Material.background: Material.Blue
                     Material.foreground: Material.White
@@ -305,9 +306,9 @@ Component{
 
     RoundButton{
         id: addTaskBtn
-        radius: parent.height*0.2
-        width: parent.height*0.12
-        height: parent.height*0.12
+        radius: parent.height
+        width: parent.height*0.1
+        height: parent.height*0.1
         x: window.width-width-20
         y: window.height-height-20
         text: "+"

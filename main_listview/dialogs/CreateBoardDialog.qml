@@ -16,7 +16,7 @@ Dialog {
     title:  qsTr("Создать доску")
     Component.onCompleted: {
         standardButton(Dialog.Cancel).text = qsTr("Отменить");
-        standardButton(Dialog.Ok).text = qsTr("Сохранить");
+        standardButton(Dialog.Save).text = qsTr("Сохранить");
     }
     Column{
         anchors.fill: parent
