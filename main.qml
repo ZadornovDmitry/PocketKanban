@@ -4,11 +4,11 @@ import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.12 as Sql
 import "main_listview"
 import "screepts/CreateDatabase.js" as CreateDatabase
-import "main_listview"
+import "main_listview/dialogs"
 
 ApplicationWindow {
     id: window
-    property alias createBoardDialogLoader_: createBoardDialogLoader
+    property alias dialogLoader_: dialogLoader
     visible: true
     width: 1080
     height: 1920
@@ -17,7 +17,7 @@ ApplicationWindow {
 
 
     Loader{
-        id: createBoardDialogLoader
+        id: dialogLoader
 
         anchors.fill: parent
     }

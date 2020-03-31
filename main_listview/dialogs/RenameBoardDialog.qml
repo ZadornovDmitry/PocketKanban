@@ -8,14 +8,19 @@ Dialog {
     anchors.centerIn: parent
 
     height: 200
-    width: parent.width/3
+    width: footer.implicitWidth + parent.width/4
     visible: true
     modal: true
-    standardButtons: Dialog.Ok | Dialog.Cancel
+    standardButtons: Dialog.Save | Dialog.Cancel
 
-    title:  qsTr("Создать доску")
+
+    title:  qsTr("Переименовать доску")
+
     Component.onCompleted: {
-        standardButton(Dialog.Cancel).text = qsTr("Отмена")
+        standardButton(Dialog.Cancel).text = qsTr("Отменить");
+
+        standardButton(Dialog.Save).text = qsTr("Переименовать");
+
     }
     Column{
         anchors.fill: parent
@@ -31,6 +36,7 @@ Dialog {
         TextField{
             height: 40
             width: parent.width
+            text: boardName
             onTextChanged: {
                 boardName = text;
             }

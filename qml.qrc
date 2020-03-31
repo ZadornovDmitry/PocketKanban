@@ -6,6 +6,8 @@
         <file>main_listview/SwipeViewDelegate.qml</file>
         <file>board_listviews/TodoListView.qml</file>
         <file>screepts/CreateDatabase.js</file>
-        <file>main_listview/CreateBoardDialog.qml</file>
+        <file>main_listview/dialogs/CreateBoardDialog.qml</file>
+        <file>main_listview/dialogs/RenameBoardDialog.qml</file>
+        <file>main_listview/dialogs/RemoveBoardDialog.qml</file>
     </qresource>
 </RCC>

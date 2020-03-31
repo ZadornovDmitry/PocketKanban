@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import QtQuick.LocalStorage 2.12 as Sql
 import "../screepts/CreateDatabase.js" as Database
-
+import "dialogs"
 Item{
 
 
@@ -73,7 +73,7 @@ Item{
 
                         db.transaction(
                                     function(tx) {
-                                        var tasks = tx.executeSql("select name from boards");
+                                        var tasks = tx.executeSql("select name from boards order by board_id DESC");
                                         boards_model.clear();
 
                                         for (var i = 0; i < tasks.rows.length; i++) {
@@ -111,7 +111,7 @@ Item{
                     }
                     onCurrentIndexChanged: {// if creating new board choosen show dialog
                         if (currentIndex == boards_model.rowCount()-1)
-                            window.createBoardDialogLoader_.sourceComponent = createBoardDialog
+                            window.dialogLoader_.sourceComponent = createBoardDialog
                     }
                     Component{
                         id: createBoardDialog
@@ -120,7 +120,7 @@ Item{
 
                             onRejected: {
                                 cb_boards.findActiveBoard();
-                                window.createBoardDialogLoader_.sourceComponent = undefined
+                                window.dialogLoader_.sourceComponent = undefined
                             }
                             onAccepted: {
 
@@ -137,7 +137,7 @@ Item{
                                             }
                                 )
                                 cb_boards.updateModel();
-                                window.createBoardDialogLoader_.sourceComponent = undefined
+                                window.dialogLoader_.sourceComponent = undefined
                             }
                         }
                     }
@@ -199,13 +199,68 @@ Item{
                                 flat:true
 
 
-                                text:qsTr("Rename")
+                                text:qsTr("Переименовать")
+                                onClicked: {
+                                    popup.close();
+                                    window.dialogLoader_.sourceComponent = renameBoardDialog;
+                                }
                             }
 
                             Button{
                                 flat: true
-                                text:qsTr("Remove")
+                                text:qsTr("Удалить")
+                                onClicked: {
+                                    popup.close();
+                                    window.dialogLoader_.sourceComponent = removeBoardDialog;
+                                }
                             }
+
+                            Component{
+                                id: renameBoardDialog
+                                RenameBoardDialog{
+                                    boardName: cb_boards.currentText
+                                    onRejected: {
+                                        window.dialogLoader_.sourceComponent = undefined
+                                    }
+                                    onAccepted: {
+
+                                        var db = Database.getDatabase();
+                                        var activeBoardId;
+                                        db.transaction(
+                                                    function(tx) {
+                                                        tx.executeSql("update Boards set name = '" + boardName + "' where board_id = (select board_id from ActiveBoard)");
+                                                    }
+                                        )
+                                        cb_boards.updateModel();
+                                        window.dialogLoader_.sourceComponent = undefined
+                                    }
+                                }
+                            }
+
+
+                            Component{
+                                id: removeBoardDialog
+                                RemoveBoardDialog{
+                                    boardName: cb_boards.currentText
+                                    onRejected: {
+                                        window.dialogLoader_.sourceComponent = undefined
+                                    }
+                                    onAccepted: {
+
+                                        var db = Database.getDatabase();
+                                        var activeBoardId;
+                                        db.transaction(
+                                                    function(tx) {
+                                                        tx.executeSql("delete from Boards where board_id = (select board_id from ActiveBoard)");
+                                                        tx.executeSql("update ActiveBoard set board_id = (SELECT MAX(board_id) FROM boards) where id = 1");
+                                                    }
+                                        )
+                                        cb_boards.updateModel();
+                                        window.dialogLoader_.sourceComponent = undefined
+                                    }
+                                }
+                            }
+
                         }
                     }
                     MouseArea{
