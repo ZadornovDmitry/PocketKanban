@@ -65,7 +65,7 @@ Item{
                     Material.background: Material.Blue
                     Material.foreground: Material.White
                     flat: true
-
+                    textRole: "value"
                     model: ListModel{ id: boards_model }
 
                     function updateModel(){// reading from databse and refill model with new data
@@ -73,13 +73,14 @@ Item{
 
                         db.transaction(
                                     function(tx) {
-                                        var tasks = tx.executeSql("select name from boards order by board_id DESC");
+                                        var tasks = tx.executeSql("select * from boards order by board_id DESC");
                                         boards_model.clear();
 
                                         for (var i = 0; i < tasks.rows.length; i++) {
                                             boards_model.append
                                                     ({
-                                                         value: tasks.rows.item(i).name
+                                                         value: tasks.rows.item(i).name,
+                                                         id: tasks.rows.item(i).board_id
 
                                                      })
                                             console.log(tasks.rows.item(i).name);
@@ -110,8 +111,19 @@ Item{
                         cb_boards.updateModel()
                     }
                     onCurrentIndexChanged: {// if creating new board choosen show dialog
+
                         if (currentIndex == boards_model.rowCount()-1)
                             window.dialogLoader_.sourceComponent = createBoardDialog
+                        else{
+                            var db = Database.getDatabase();
+
+                            db.transaction(
+                                        function(tx) {
+                                            var sql = "update ActiveBoard set board_id=" + boards_model.get(currentIndex).id + " where id = 1"
+                                            tx.executeSql(sql);
+                                        }
+                            )
+                        }
                     }
                     Component{
                         id: createBoardDialog
@@ -129,9 +141,7 @@ Item{
                                 db.transaction(
                                             function(tx) {
                                                 activeBoardId = tx.executeSql("insert into Boards values(?,?)", ["",boardName]);
-                                                //activeBoardId = tx.executeSql("SELECT MAX(board_id) FROM boards;").rows.item[0].max
                                                 var sql = "update ActiveBoard set board_id=" + activeBoardId.insertId + " where id = 1"
-                                                console.log(sql);
                                                 tx.executeSql(sql);
 
                                             }
