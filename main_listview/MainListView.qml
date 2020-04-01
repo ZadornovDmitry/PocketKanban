@@ -5,6 +5,7 @@ import QtQuick.Controls.Material 2.2
 import QtQuick.LocalStorage 2.12 as Sql
 import "../screepts/CreateDatabase.js" as Database
 import "dialogs"
+import "widgets"
 Item{
 
 
@@ -155,128 +156,69 @@ Item{
                 }
                 Item{
                     height: parent.height
-                    width:mainListView.width - cb_boards.width - (parent.height*2)-70
+                    width:mainListView.width - cb_boards.width - (parent.height*2)-dottedCb.width
                 }
-
-                Rectangle{
-                    id: dots
+                DottedCombobox{
+                    id: dottedCb
                     height: parent.height
-                    width: parent.height
+                    width:parent.height + parent.height/2
+                    popupWidth: 200
 
-                    color: "transparent"
-
-                    Column{
-                        anchors.topMargin: 15
-                        anchors.bottomMargin: 10
-                        anchors.fill: parent
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        spacing: 2
-                        //white dots
-                        Rectangle{
-                            height: 4
-                            width: 4
-                            radius: width
-                        }
-                        Rectangle{
-                            height: 4
-                            width: 4
-                            radius: width
-                        }
-                        Rectangle{
-                            height: 4
-                            width: 4
-                            radius: width
-                        }
-
-                    }
-
-                    Popup {
-                        id: popup
-
-                        y:parent.height
-                        x:parent.width - width
-
-                        //width: mainListView.width/3
-
-                        focus: true
-
-                        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-                        ColumnLayout{
-                            anchors.fill:parent
-                            Button{
-                                id: btnRename
-
-                                flat:true
-
-
-                                text:qsTr("Переименовать")
-                                onClicked: {
-                                    popup.close();
-                                    window.dialogLoader_.sourceComponent = renameBoardDialog;
-                                }
-                            }
-
-                            Button{
-                                flat: true
-                                text:qsTr("Удалить")
-                                onClicked: {
-                                    popup.close();
-                                    window.dialogLoader_.sourceComponent = removeBoardDialog;
-                                }
-                            }
-
-                            Component{
-                                id: renameBoardDialog
-                                RenameBoardDialog{
-                                    boardName: cb_boards.currentText
-                                    onRejected: {
-                                        window.dialogLoader_.sourceComponent = undefined
-                                    }
-                                    onAccepted: {
-
-                                        var db = Database.getDatabase();
-                                        var activeBoardId;
-                                        db.transaction(
-                                                    function(tx) {
-                                                        tx.executeSql("update Boards set name = '" + boardName + "' where board_id = (select board_id from ActiveBoard)");
-                                                    }
-                                        )
-                                        cb_boards.updateModel();
-                                        window.dialogLoader_.sourceComponent = undefined
-                                    }
-                                }
-                            }
-
-
-                            Component{
-                                id: removeBoardDialog
-                                RemoveBoardDialog{
-                                    boardName: cb_boards.currentText
-                                    onRejected: {
-                                        window.dialogLoader_.sourceComponent = undefined
-                                    }
-                                    onAccepted: {
-
-                                        var db = Database.getDatabase();
-                                        var activeBoardId;
-                                        db.transaction(
-                                                    function(tx) {
-                                                        tx.executeSql("delete from Boards where board_id = (select board_id from ActiveBoard)");
-                                                        tx.executeSql("update ActiveBoard set board_id = (SELECT MAX(board_id) FROM boards) where id = 1");
-                                                    }
-                                        )
-                                        cb_boards.updateModel();
-                                        window.dialogLoader_.sourceComponent = undefined
-                                    }
-                                }
-                            }
-
+                    model:["Переименовать", "Удалить"]
+                    onCurrentIndexChanged: {
+                        if (currentIndex == 0){
+                            window.dialogLoader_.sourceComponent = renameBoardDialog;
+                            currentIndex = -1;
+                        }else if (currentIndex == 1){
+                            window.dialogLoader_.sourceComponent = removeBoardDialog;
+                            currentIndex = -1;
                         }
                     }
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: {popup.open();}
+
+                    Component{
+                        id: renameBoardDialog
+                        RenameBoardDialog{
+                            boardName: cb_boards.currentText
+                            onRejected: {
+                                window.dialogLoader_.sourceComponent = undefined
+                            }
+                            onAccepted: {
+
+                                var db = Database.getDatabase();
+                                var activeBoardId;
+                                db.transaction(
+                                            function(tx) {
+                                                tx.executeSql("update Boards set name = '" + boardName + "' where board_id = (select board_id from ActiveBoard)");
+                                            }
+                                )
+                                cb_boards.updateModel();
+                                window.dialogLoader_.sourceComponent = undefined
+                            }
+                        }
+                    }
+
+
+                    Component{
+                        id: removeBoardDialog
+                        RemoveBoardDialog{
+                            boardName: cb_boards.currentText
+                            onRejected: {
+                                window.dialogLoader_.sourceComponent = undefined
+                            }
+                            onAccepted: {
+
+                                var db = Database.getDatabase();
+                                var activeBoardId;
+                                db.transaction(
+                                            function(tx) {
+                                                tx.executeSql("delete from Boards where board_id = (select board_id from ActiveBoard)");
+                                                tx.executeSql("update ActiveBoard set board_id = (SELECT MAX(board_id) FROM boards) where id = 1");
+                                            }
+                                )
+                                cb_boards.updateModel();
+                                window.dialogLoader_.sourceComponent = undefined
+                            }
+                        }
                     }
                 }
             }
