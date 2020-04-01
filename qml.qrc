@@ -9,6 +9,7 @@
         <file>main_listview/dialogs/CreateBoardDialog.qml</file>
         <file>main_listview/dialogs/RenameBoardDialog.qml</file>
         <file>main_listview/dialogs/RemoveBoardDialog.qml</file>
-        <file>main_listview/widgets/DottedCombobox.qml</file>
+        <file>main_listview/widgets/DottedComboBox.qml</file>
+        <file>main_listview/widgets/BoardsComboBox.qml</file>
     </qresource>
 </RCC>

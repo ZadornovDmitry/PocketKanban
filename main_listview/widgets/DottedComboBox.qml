@@ -30,7 +30,7 @@ ComboBox {
             height: parent.height/2
 
             text :"..."
-            font.pointSize:  20
+            font.pointSize:  30
             verticalAlignment: Qt.AlignVCenter
             color: "white"
 

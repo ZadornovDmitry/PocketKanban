@@ -59,9 +59,9 @@ Item{
                         NumberAnimation {id:anim; target: drawer; property: "position"; to: 1; duration: 167}
                     }
                 }
-                ComboBox {
+                BoardsComboBox {
                     id: cb_boards// combobox with list of boards
-                    width:parent.width/2
+                    //width:parent.width/2
 
                     height: parent.height
                     Material.background: Material.Blue
@@ -158,7 +158,7 @@ Item{
                     height: parent.height
                     width:mainListView.width - cb_boards.width - (parent.height*2)-dottedCb.width
                 }
-                DottedCombobox{
+                DottedComboBox{
                     id: dottedCb
                     height: parent.height
                     width:parent.height + parent.height/2
