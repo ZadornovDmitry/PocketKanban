@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.impl 2.12
 import QtQuick.Templates 2.12 as T
 import QtQuick.Controls.Material 2.12
+import QtGraphicalEffects 1.12
 
 
 ComboBox {
@@ -18,24 +19,44 @@ ComboBox {
     currentIndex: -1
 
     contentItem:
-        Rectangle{
-        rotation: 90
-        color: "transparent"
-        height: parent.width
-        width: parent.width
+        Item{
+        id: contentItem_
+        height: parent.height
+        width: parent.height
+        Image {
+            id: icon
+            height: parent.height*.45
+            width: parent.height*.45
+            source: "qrc:/MoreMenu"
+            anchors.centerIn: parent
+            fillMode: Image.PreserveAspectFit
 
-        Label{
-            x:parent.width/2-width/2
-            y:parent.height/2-height
-            height: parent.height/2
 
-            text :"..."
-            font.pointSize:  30
-            verticalAlignment: Qt.AlignVCenter
-            color: "white"
+            mipmap: true
+            scale: 0.8
 
         }
+
     }
+
+//        Rectangle{
+//        rotation: 90
+//        color: "transparent"
+//        height: parent.width
+//        width: parent.width
+
+//        Label{
+//            x:parent.width/2-width/2
+//            y:parent.height/2-height
+//            height: parent.height/2
+
+//            text :"..."
+//            font.pointSize:  30
+//            verticalAlignment: Qt.AlignVCenter
+//            color: "white"
+
+//        }
+//    }
     popup.width: popupWidth
     popup.y: height
     popup.x: -popup.width+width

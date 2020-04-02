@@ -141,7 +141,7 @@ Item{
                     height: parent.height
                     width:mainListView.width - cb_boards.width - (parent.height*2)-dottedCb.width
                 }
-
+                // dotted menu
                 DottedComboBox{
                     id: dottedCb
                     height: parent.height
