@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/art.png</file>
+        <file>resources/bin.png</file>
+        <file>resources/create-new-pencil-button.png</file>
+        <file>resources/download-button.png</file>
+        <file>resources/go-back-left-arrow.png</file>
+        <file>resources/right-arrow-forward.png</file>
+        <file>resources/switch.png</file>
+    </qresource>
+</RCC>

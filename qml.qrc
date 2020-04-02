@@ -11,5 +11,13 @@
         <file>main_listview/dialogs/RemoveBoardDialog.qml</file>
         <file>main_listview/widgets/DottedComboBox.qml</file>
         <file>main_listview/widgets/BoardsComboBox.qml</file>
+        <file>board_listviews/IconItem.qml</file>
+        <file alias="Art">icons/art.png</file>
+        <file alias="Bin">icons/bin.png</file>
+        <file alias="Pencil">icons/create-new-pencil-button.png</file>
+        <file alias="Download">icons/download-button.png</file>
+        <file alias="BackArrow">icons/go-back-left-arrow.png</file>
+        <file alias="RightArrow">icons/right-arrow-forward.png</file>
+        <file alias="Switch">icons/switch.png</file>
     </qresource>
 </RCC>

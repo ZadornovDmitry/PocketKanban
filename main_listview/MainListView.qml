@@ -239,7 +239,7 @@ Component{
         Connections{
             target: swipe.tabBar
             onCurrentIndexChanged:{
-                addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'unvisible';
+                addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'ivisible';
             }
         }
     }
@@ -249,32 +249,33 @@ Component{
     RoundButton{
         id: addTaskBtn
         radius: parent.height
-        width: parent.height*0.1
-        height: parent.height*0.1
+        width: parent.height/11
+        height: parent.height/11
         x: window.width-width-20
         y: window.height-height-20
         text: "+"
-        Material.foreground: "blue"
-        Material.background: "light blue"
-        font.pixelSize: 45
+        Material.foreground: "white"
+        Material.background: Material.color(Material.Blue)
+        font.pixelSize: 21
+
         transitions: [Transition {
                 from: ""
-                to: "unvisible"
+                to: "ivisible"
                 NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 200}
                 NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 300}
             },
             Transition {
-                            from: "unvisible"
+                            from: "ivisible"
                             to: ""
                             NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 200}
                             NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 300}
                         }]
         states: [State {
-                name: "unvisible"
+                name: "ivisible"
                 PropertyChanges {
                     target: addTaskBtn
-                    x:window.width-width-20-width/2
-                    y:window.height-height-20-width/2
+                    x: window.width-width-20-width/2
+                    y: window.height-height-20-width/2
                     height: 0
                     width:0
 
