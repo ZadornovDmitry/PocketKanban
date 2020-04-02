@@ -19,5 +19,8 @@
         <file alias="BackArrow">icons/go-back-left-arrow.png</file>
         <file alias="RightArrow">icons/right-arrow-forward.png</file>
         <file alias="Switch">icons/switch.png</file>
+        <file alias="Menu">icons/menu-button.png</file>
+        <file alias="MoreMenu">icons/show-more-button-with-three-dots.png</file>
+        <file>main_listview/widgets/MenuWidget.qml</file>
     </qresource>
 </RCC>

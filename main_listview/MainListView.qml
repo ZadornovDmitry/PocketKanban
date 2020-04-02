@@ -3,16 +3,17 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Material 2.2
 import QtQuick.LocalStorage 2.12 as Sql
+import QtGraphicalEffects 1.12
+
 import "../screepts/CreateDatabase.js" as Database
 import "dialogs"
 import "widgets"
+
 Item{
-
-
     ListView{
         id: mainListView
         anchors.fill: parent
-
+        // this is header that disapear when scroling down and wise versa
         header: ToolBar
         {
             id: toolBar
@@ -21,46 +22,26 @@ Item{
                 anchors.fill: parent
                 spacing: 10
                 anchors.leftMargin: 20
-                Rectangle
-                {
-                    id: menuBtn
+
+                MenuWidget{
+                    id:menuWidget
                     height: parent.height;width:parent.height
-                    color: "transparent"
-                    Rectangle{
-                        anchors.centerIn: parent
-                        height: parent.height/4*2-5
-                        width: parent.width/4*2-5
-                        color: "transparent"
-                        Column{
-                            anchors.fill: parent
-                            anchors.topMargin: 5
-
-                            spacing: 3
-
-                            Rectangle{
-                                height: 2
-                                width: parent.width
-                            }
-                            Rectangle{
-                                height: 2
-                                width: parent.width
-                            }
-                            Rectangle{
-                                height: 2
-                                width: parent.width
-                            }
+                    onClickedFunction: function(){drawer.visible = true; anim.start()}
+                    NumberAnimation {id:anim; target: drawer; property: "position"; to: 1; duration: 167}
+                    Connections{
+                        target: drawer
+                        onAboutToHide:{
+                            menuWidget.menuState="menu";
+                        }
+                        onAboutToShow:{
+                            menuWidget.menuState="back";
                         }
                     }
-
-                    MouseArea{
-                        id: mouseArea
-                        anchors.fill: parent
-                        onClicked: {drawer.visible = true; anim.start()}
-                        NumberAnimation {id:anim; target: drawer; property: "position"; to: 1; duration: 167}
-                    }
                 }
+
+                // combobox with list of boards
                 BoardsComboBox {
-                    id: cb_boards// combobox with list of boards
+                    id: cb_boards
                     //width:parent.width/2
 
                     height: parent.height
@@ -124,9 +105,10 @@ Item{
                                             var sql = "update ActiveBoard set board_id=" + boards_model.get(currentIndex).id + " where id = 1"
                                             tx.executeSql(sql);
                                         }
-                            )
+                                        )
                         }
                     }
+                    // show when new board need to be ctreated
                     Component{
                         id: createBoardDialog
 
@@ -147,17 +129,19 @@ Item{
                                                 tx.executeSql(sql);
 
                                             }
-                                )
+                                            )
                                 cb_boards.updateModel();
                                 window.dialogLoader_.sourceComponent = undefined
                             }
                         }
                     }
                 }
+                // just spacer
                 Item{
                     height: parent.height
                     width:mainListView.width - cb_boards.width - (parent.height*2)-dottedCb.width
                 }
+
                 DottedComboBox{
                     id: dottedCb
                     height: parent.height
@@ -190,14 +174,14 @@ Item{
                                             function(tx) {
                                                 tx.executeSql("update Boards set name = '" + boardName + "' where board_id = (select board_id from ActiveBoard)");
                                             }
-                                )
+                                            )
                                 cb_boards.updateModel();
                                 window.dialogLoader_.sourceComponent = undefined
                             }
                         }
                     }
 
-
+                    // dialog shows on remove board
                     Component{
                         id: removeBoardDialog
                         RemoveBoardDialog{
@@ -214,7 +198,7 @@ Item{
                                                 tx.executeSql("delete from Boards where board_id = (select board_id from ActiveBoard)");
                                                 tx.executeSql("update ActiveBoard set board_id = (SELECT MAX(board_id) FROM boards) where id = 1");
                                             }
-                                )
+                                            )
                                 cb_boards.updateModel();
                                 window.dialogLoader_.sourceComponent = undefined
                             }
@@ -231,21 +215,24 @@ Item{
 
 
     }
-Component{
-    id: swipeDelegate
-    SwipeViewDelegate{
-        id:swipe
-        contentHeigh: mainListView.height
-        Connections{
-            target: swipe.tabBar
-            onCurrentIndexChanged:{
-                addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'ivisible';
+
+    // this is delegate for main listview
+    // it contains three boards with tasks(todo, do, done)
+    Component{
+        id: swipeDelegate
+        SwipeViewDelegate{
+            id:swipe
+            contentHeigh: mainListView.height
+            Connections{
+                target: swipe.tabBar
+                onCurrentIndexChanged:{
+                    addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'ivisible';
+                }
             }
         }
+
     }
-
-}
-
+    // button for adding new task on active board
     RoundButton{
         id: addTaskBtn
         radius: parent.height
@@ -265,11 +252,11 @@ Component{
                 NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 300}
             },
             Transition {
-                            from: "ivisible"
-                            to: ""
-                            NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 200}
-                            NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 300}
-                        }]
+                from: "ivisible"
+                to: ""
+                NumberAnimation { properties: "x,y"; easing.type: Easing.InOutQuad; duration: 200}
+                NumberAnimation { properties: "height,width"; easing.type: Easing.InOutQuad; duration: 300}
+            }]
         states: [State {
                 name: "ivisible"
                 PropertyChanges {
