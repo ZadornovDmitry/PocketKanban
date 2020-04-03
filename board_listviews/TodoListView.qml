@@ -79,6 +79,7 @@ Rectangle {
 
             onClicked:
             {
+                taskName.forceActiveFocus();
                 view.currentIndex = index;
 
                 if (options_rect.state == "")
@@ -134,8 +135,18 @@ Rectangle {
                         font.pixelSize: height/5
                         background: null
                         verticalAlignment: Qt.AlignVCenter
+                        readOnly: true
+                        onPressed: {
+                            view.currentIndex = index;
+
+                            if (options_rect.state == "")
+                                options_rect.state = "visible";
+                            else
+                                options_rect.state = "";
+                        }
+
                         onEditingFinished: {
-                            console.log(visualModel.items.get(index).model.value)
+
                             var db = CreateDatabase.getDatabase();
 
                             db.transaction(
@@ -144,6 +155,8 @@ Rectangle {
                                             tx.executeSql(query);
                                         }
                                         )
+                            readOnly = true;
+
                         }
 
                     }
@@ -185,6 +198,10 @@ Rectangle {
                             }
                             IconItem{
                                 imageSource: "qrc:/Pencil"
+                                clickFunction: function() {
+                                    taskName.readOnly = false;
+                                    taskName.forceActiveFocus();
+                                }
                             }
                             IconItem{
                                 imageSource: "qrc:/Bin"
