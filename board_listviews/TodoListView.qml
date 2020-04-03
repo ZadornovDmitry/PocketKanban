@@ -195,6 +195,18 @@ Rectangle {
 
                             IconItem{
                                 imageSource: "qrc:/RightArrow"
+                                clickFunction: function()
+                                {
+                                    var db = CreateDatabase.getDatabase();
+
+                                    db.transaction(
+                                                function(tx) {
+                                                    var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") + 1 where task_id = " +visualModel.items.get(index).model.id;
+                                                    tx.executeSql(query);
+                                                    updateModel();
+                                                }
+                                                )
+                                }
                             }
                             IconItem{
                                 imageSource: "qrc:/Pencil"
