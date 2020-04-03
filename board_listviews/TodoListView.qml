@@ -205,6 +205,18 @@ Rectangle {
                             }
                             IconItem{
                                 imageSource: "qrc:/Bin"
+                                clickFunction: function()
+                                {
+                                    var db = CreateDatabase.getDatabase();
+
+                                    db.transaction(
+                                                function(tx) {
+                                                    var query = "delete from Tasks where task_id = " + visualModel.items.get(index).model.id;
+                                                    tx.executeSql(query);
+                                                    updateModel();
+                                                }
+                                                )
+                                }
                             }
                             IconItem{
                                 imageSource: "qrc:/Art"
