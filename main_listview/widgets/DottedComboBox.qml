@@ -32,31 +32,13 @@ ComboBox {
             fillMode: Image.PreserveAspectFit
 
 
+
             mipmap: true
             scale: 0.8
 
         }
-
     }
 
-//        Rectangle{
-//        rotation: 90
-//        color: "transparent"
-//        height: parent.width
-//        width: parent.width
-
-//        Label{
-//            x:parent.width/2-width/2
-//            y:parent.height/2-height
-//            height: parent.height/2
-
-//            text :"..."
-//            font.pointSize:  30
-//            verticalAlignment: Qt.AlignVCenter
-//            color: "white"
-
-//        }
-//    }
     popup.width: popupWidth
     popup.y: height
     popup.x: -popup.width+width
