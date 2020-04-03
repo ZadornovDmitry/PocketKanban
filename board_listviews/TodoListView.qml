@@ -1,9 +1,9 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.12 as Sql
 import QtGraphicalEffects 1.12
-import QtQml.Models 2.1
+import QtQml.Models 2.12
 
 import "../screepts/CreateDatabase.js" as CreateDatabase
 
@@ -26,7 +26,6 @@ Rectangle {
                                          'priority': tasks.rows.item(i).priority,
                                          "id": tasks.rows.item(i).task_id
                                      })
-                            //console.log(tasks.rows.item(i).priority);
                         }
                     }
                     );
@@ -47,27 +46,26 @@ Rectangle {
             drag.target: held ? content : undefined
             drag.axis: Drag.YAxis
 
-
+            pressAndHoldInterval: 500
 
             onPressAndHold: held = true
             onReleased:
             {
+                // if it was drag and drop update database
+                if (held){
+                    var db = CreateDatabase.getDatabase();
+
+                    db.transaction(
+                                function(tx) {
+                                    for (var i=0; i< visualModel.items.count; i++ ){
+                                        var query = "update Tasks set priority = " + (i+1) + " where task_id = " + visualModel.items.get(i).model.id;
+                                        tx.executeSql(query);
+                                    }
+                                }
+                                )
+                    updateModel();
+                }
                 held = false;
-                var db = CreateDatabase.getDatabase();
-
-                db.transaction(
-                    function(tx) {
-                        for (var i=0; i< visualModel.items.count; i++ ){
-                            var query = "update Tasks set priority = " + (i+1) + " where task_id = " + visualModel.items.get(i).model.id;
-                            console.log(query);
-                            tx.executeSql(query);
-                            console.log("lalal " + visualModel.items.get(i).model.priority)
-                        }
-                    }
-                )
-                updateModel();
-
-
             }
 
             Connections{
@@ -88,7 +86,7 @@ Rectangle {
                 else
                     options_rect.state = "";
             }
-            RectangularGlow {
+            RectangularGlow {// shadow effect
 
                    id: effect
                    anchors.fill: content
@@ -136,6 +134,17 @@ Rectangle {
                         font.pixelSize: height/5
                         background: null
                         verticalAlignment: Qt.AlignVCenter
+                        onEditingFinished: {
+                            console.log(visualModel.items.get(index).model.value)
+                            var db = CreateDatabase.getDatabase();
+
+                            db.transaction(
+                                        function(tx) {
+                                            var query = "update Tasks set name = '" + text + "' where task_id = " + visualModel.items.get(index).model.id;
+                                            tx.executeSql(query);
+                                        }
+                                        )
+                        }
 
                     }
                     Rectangle{
@@ -206,9 +215,7 @@ Rectangle {
         model: ListModel
         {
             id:todoModel
-            onDataChanged:{
-                console.log("data changed")
-            }
+
         }
         delegate: dragDelegate
     }
@@ -224,7 +231,5 @@ Rectangle {
         cacheBuffer: 50
 
         Component.onCompleted: updateModel()
-
-
     }
 }
