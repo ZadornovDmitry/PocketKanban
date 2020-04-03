@@ -29,7 +29,7 @@ console.log("fill db")
             tx.executeSql("Insert or replace Into Boards(name) values('Главная доска')");
             tx.executeSql("Insert or replace Into ActiveBoard(board_id) values('1')");
             tx.executeSql("Insert  Into Tasks(name, board_id, state_id) values('myTask', '1', '1')");
-            tx.executeSql("Insert  Into Tasks(name, board_id, state_id) values('myTask1', '1', '1')");
+            tx.executeSql("Insert  Into Tasks(name, board_id, state_id) values('myTask1', '1', '2')");
             tx.executeSql("Insert  Into Tasks(name, board_id, state_id) values('myTask2', '1', '1')");
         }
     )

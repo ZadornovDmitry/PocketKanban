@@ -12,6 +12,27 @@ Rectangle {
 
     width: 300; height: 400
 
+    function updateModel(){
+        todoModel.clear();
+        var db = CreateDatabase.getDatabase();
+
+        db.transaction(
+                    function(tx) {
+                        var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = 'TODO') order by priority");
+                        for (var i = 0; i < tasks.rows.length; i++) {
+                            todoModel.append
+                                    ({
+                                         'value': tasks.rows.item(i).name,
+                                         'priority': tasks.rows.item(i).priority,
+                                         "id": tasks.rows.item(i).task_id
+                                     })
+                            //console.log(tasks.rows.item(i).priority);
+                        }
+                    }
+                    );
+    }
+
+
     Component {
         id: dragDelegate
 
@@ -26,8 +47,29 @@ Rectangle {
             drag.target: held ? content : undefined
             drag.axis: Drag.YAxis
 
+
+
             onPressAndHold: held = true
-            onReleased: held = false
+            onReleased:
+            {
+                held = false;
+                var db = CreateDatabase.getDatabase();
+
+                db.transaction(
+                    function(tx) {
+                        for (var i=0; i< visualModel.items.count; i++ ){
+                            var query = "update Tasks set priority = " + (i+1) + " where task_id = " + visualModel.items.get(i).model.id;
+                            console.log(query);
+                            tx.executeSql(query);
+                            console.log("lalal " + visualModel.items.get(i).model.priority)
+                        }
+                    }
+                )
+                updateModel();
+
+
+            }
+
             Connections{
                 target: view
                 onCurrentIndexChanged:{
@@ -141,9 +183,6 @@ Rectangle {
                             IconItem{
                                 imageSource: "qrc:/Art"
                             }
-                            IconItem{
-                                imageSource: "qrc:/Switch"
-                            }
                         }
                     }
                 }
@@ -155,14 +194,22 @@ Rectangle {
                     visualModel.items.move(
                             drag.source.DelegateModel.itemsIndex,
                             dragArea.DelegateModel.itemsIndex)
+
                 }
+
             }
         }
     }
     DelegateModel {
         id: visualModel
 
-        model: ListModel{id:todoModel}
+        model: ListModel
+        {
+            id:todoModel
+            onDataChanged:{
+                console.log("data changed")
+            }
+        }
         delegate: dragDelegate
     }
 
@@ -176,22 +223,8 @@ Rectangle {
         spacing: 20
         cacheBuffer: 50
 
-        Component.onCompleted: {
+        Component.onCompleted: updateModel()
 
-            var db = CreateDatabase.getDatabase();
 
-            db.transaction(
-                        function(tx) {
-                            var tasks = tx.executeSql("select name from tasks");
-                            for (var i = 0; i < tasks.rows.length; i++) {
-                                todoModel.append
-                                        ({
-                                             'value': tasks.rows.item(i).name
-                                         })
-                                console.log(tasks.rows.item(i).name);
-                            }
-                        }
-                        );
-        }
     }
 }

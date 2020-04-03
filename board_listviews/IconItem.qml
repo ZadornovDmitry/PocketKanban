@@ -8,9 +8,11 @@ Item{
     property var imageSource:""
     property var icoColor: Material.color(Material.Blue)
     property var clickFunction: null
+
     width: parent.height
     height: parent.height
 MouseArea{
+    id: ma
     anchors.fill: parent
     onClicked: {
         clickFunction();
