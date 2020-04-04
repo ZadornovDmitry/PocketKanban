@@ -4,7 +4,7 @@
         <file>qtquickcontrols2.conf</file>
         <file>main_listview/MainListView.qml</file>
         <file>main_listview/SwipeViewDelegate.qml</file>
-        <file>board_listviews/TodoListView.qml</file>
+        <file>board_listviews/TasksListView.qml</file>
         <file>screepts/CreateDatabase.js</file>
         <file>main_listview/dialogs/CreateBoardDialog.qml</file>
         <file>main_listview/dialogs/RenameBoardDialog.qml</file>
@@ -24,5 +24,9 @@
         <file>main_listview/widgets/MenuWidget.qml</file>
         <file>board_listviews/dialogs/ColorChooseDialog.qml</file>
         <file alias="Tick">icons/tick.png</file>
+        <file>board_listviews/ToDoTaskDelegateOptions.qml</file>
+        <file>board_listviews/DoTaskDelegateOptions.qml</file>
+        <file>board_listviews/DoneTaskDelegateOptions.qml</file>
+        <file>board_listviews/TaskDelegate.qml</file>
     </qresource>
 </RCC>
