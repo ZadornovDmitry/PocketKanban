@@ -11,7 +11,22 @@ import "dialogs"
 MouseArea {
     id: dragArea
 
+    property string taskType: ""
     property bool held: false
+
+    function getOptionsItem(__taskType)
+    {
+        console.log(__taskType)
+        switch (__taskType)
+        {
+        case 'TODO':
+            return "ToDoTaskDelegateOptions.qml";
+        case 'DOING':
+            return "DoTaskDelegateOptions.qml";
+        case 'DONE':
+            return "DoneTaskDelegateOptions.qml";
+        }
+    }
 
     anchors { left: parent.left; right: parent.right }
     height: content.height
@@ -61,6 +76,7 @@ MouseArea {
         else
             options_rect.state = "";
     }
+
     RectangularGlow {// shadow effect
 
         id: effect
@@ -132,9 +148,34 @@ MouseArea {
                     readOnly = true;
 
                 }
-
             }
-            ToDoTaskDelegateOptions{id: options_rect}
+
+            Rectangle{
+                id: options_rect
+                color: "transparent"
+                height: 0
+                width: parent.width
+
+                states:
+                    [
+                    State {
+                        name: "visible"
+
+                        PropertyChanges {
+                            target: options_rect
+                            height: taskName.height/2
+
+                        }
+                    }
+                ]
+                transitions: Transition {
+                    NumberAnimation { properties: "height"; easing.type: Easing.InOutQuad; duration: 300 }
+                }
+                Loader{
+                    source: getOptionsItem(dragArea.taskType)
+                    anchors.fill: parent
+                }
+            }
         }
     }
     DropArea {

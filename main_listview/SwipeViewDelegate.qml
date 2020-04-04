@@ -38,46 +38,28 @@ Item{
         anchors.top: tabBar_.bottom
         currentIndex: tabBar_.currentIndex
 
-        Item {
-            id: firstPage
-            TasksListView
-            {
-                anchors.fill: parent
-                updateModelFunction: function (__model){
-                        var db = CreateDatabase.getDatabase();
+        Component.onCompleted: {// getting data from db States table
+            var db = CreateDatabase.getDatabase();
 
-                        db.transaction(
-                                    function(tx) {
-                                        var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = 'TODO') order by priority");
-                                        if (tasks.rows.length < __model.count)
-                                            __model.remove(0, __model.count - tasks.rows.length);
-                                        for (var i = 0; i < tasks.rows.length; i++) {
-                                            __model.set(i,{
-                                                              'value': tasks.rows.item(i).name,
-                                                              'priority': tasks.rows.item(i).priority,
-                                                              'id': tasks.rows.item(i).task_id,
-                                                              'taskColor': tasks.rows.item(i).color
-                                                          })
-                                        }
-                                    }
-                                    );
-                    }
-
+            db.transaction(
+            function(tx) {
+                var states = tx.executeSql("select * from States");
+                for (var i = 0; i < states.rows.length; i++) {
+                    repeaterModel.insert(i, {'type': states.rows.item(i).state});
+                }
+            });
+        }
+        // repeater take data from database and make items according to States table
+        Repeater{
+            id: itemRepeater
+            model:ListModel{id: repeaterModel}
+            Item {
+                TasksListView
+                {
+                    anchors.fill: parent
+                    taskType: type
+                }
             }
-            //Rectangle{height: contentHeigh; width: parent.width; color: "lightblue"}
-
         }
-        Item {
-            id: secondPage
-            Text{text:"lalala"}
-        }
-        Item {
-            id: thirdPage
-            Text{text:"lalala"}
-        }
-
-
     }
-
-
 }

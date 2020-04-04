@@ -12,8 +12,30 @@ Rectangle {
     id: root
 
     width: 300; height: 400
+    property string taskType: ""
 
-    property var updateModelFunction: undefined
+    property var updateModelFunction: function (__model){
+        var db = CreateDatabase.getDatabase();
+
+        db.transaction(
+                    function(tx) {
+                        var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = '"+taskType+"') order by priority");
+                        if (tasks.rows.length < __model.count)
+                            __model.remove(0, __model.count - tasks.rows.length);
+                        for (var i = 0; i < tasks.rows.length; i++) {
+                            __model.set(i,{
+                                            'value': tasks.rows.item(i).name,
+                                            'priority': tasks.rows.item(i).priority,
+                                            'id': tasks.rows.item(i).task_id,
+                                            'taskColor': tasks.rows.item(i).color
+                                        })
+                        }
+                    }
+                    );
+    }
+
+
+    onTaskTypeChanged: updateModelFunction(listModel)
 
     DelegateModel {
         id: visualModel
@@ -23,7 +45,7 @@ Rectangle {
             id:listModel
 
         }
-        delegate: TaskDelegate{}
+        delegate: TaskDelegate{taskType: root.taskType}
     }
 
     ListView {
