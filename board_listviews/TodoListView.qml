@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.12
 import QtQml.Models 2.12
 
 import "../screepts/CreateDatabase.js" as CreateDatabase
+import "dialogs"
 
 Rectangle {
     id: root
@@ -13,24 +14,24 @@ Rectangle {
     width: 300; height: 400
 
     function updateModel(){
-        todoModel.clear();
         var db = CreateDatabase.getDatabase();
 
         db.transaction(
                     function(tx) {
                         var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = 'TODO') order by priority");
+                        if (tasks.rows.length < todoModel.count)
+                            todoModel.remove(0, todoModel.count - tasks.rows.length);
                         for (var i = 0; i < tasks.rows.length; i++) {
-                            todoModel.append
-                                    ({
-                                         'value': tasks.rows.item(i).name,
-                                         'priority': tasks.rows.item(i).priority,
-                                         "id": tasks.rows.item(i).task_id
-                                     })
+                            todoModel.set(i,{
+                                              'value': tasks.rows.item(i).name,
+                                              'priority': tasks.rows.item(i).priority,
+                                              'id': tasks.rows.item(i).task_id,
+                                              'taskColor': tasks.rows.item(i).color
+                                          })
                         }
                     }
                     );
     }
-
 
     Component {
         id: dragDelegate
@@ -48,7 +49,7 @@ Rectangle {
 
             pressAndHoldInterval: 500
 
-            onPressAndHold: held = true
+            onPressAndHold: {held = true; view.currentIndex = index;}
             onReleased:
             {
                 // if it was drag and drop update database
@@ -63,6 +64,7 @@ Rectangle {
                                     }
                                 }
                                 )
+                    todoModel.clear();
                     updateModel();
                 }
                 held = false;
@@ -106,7 +108,7 @@ Rectangle {
                     verticalCenter: parent.verticalCenter
                 }
                 width: dragArea.width; height: column.implicitHeight
-                color: "#CEEDF4";
+                color: taskColor;
 
                 radius: 3
                 Drag.active: dragArea.held
@@ -232,6 +234,37 @@ Rectangle {
                             }
                             IconItem{
                                 imageSource: "qrc:/Art"
+                                clickFunction: function() {
+                                    dialogLoader.sourceComponent = colorChooseDialog;
+                                }
+                                Connections{
+                                    target: dialogLoader.item
+                                    ignoreUnknownSignals: true
+                                    onChoosenColor:{
+                                        if (index == view.currentIndex){
+                                            dialogLoader.sourceComponent = undefined
+                                            //content.color = color
+                                            var db = CreateDatabase.getDatabase();
+
+                                            db.transaction(
+                                                        function(tx) {
+                                                            var query = "update Tasks set color = '" + color + "' where task_id = " + visualModel.items.get(index).model.id;
+                                                            tx.executeSql(query);
+                                                        }
+                                                        );
+                                            updateModel();
+                                        }
+                                    }
+                                }
+
+                                Component{
+                                    id: colorChooseDialog
+                                    ColorChooseDialog{
+                                        onRejected: {
+                                            dialogLoader.sourceComponent = undefined;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

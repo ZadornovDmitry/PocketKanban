@@ -16,7 +16,7 @@ console.log("fill db")
             // Create the database if it doesn't already exist
 
             tx.executeSql("CREATE TABLE IF NOT EXISTS Boards (board_id INTEGER PRIMARY KEY NOT NULL UNIQUE, name STRING)");
-            tx.executeSql("CREATE TABLE IF NOT EXISTS Tasks (task_id INTEGER PRIMARY KEY UNIQUE NOT NULL, board_id INTEGER REFERENCES Boards (board_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, name STRING, state_id INTEGER REFERENCES States (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, priority INTEGER DEFAULT (0))");
+            tx.executeSql("CREATE TABLE IF NOT EXISTS Tasks (task_id INTEGER PRIMARY KEY UNIQUE NOT NULL, board_id INTEGER REFERENCES Boards (board_id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, name STRING, state_id INTEGER REFERENCES States (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL, priority INTEGER DEFAULT (0), color STRING DEFAULT ('#b2ebf2'))");
             tx.executeSql("CREATE TABLE IF NOT EXISTS States (id INTEGER PRIMARY KEY UNIQUE NOT NULL, state STRING UNIQUE)");
             tx.executeSql("CREATE TABLE IF NOT EXISTS ActiveBoard (id INTEGER PRIMARY KEY NOT NULL UNIQUE, board_id INTEGER REFERENCES Boards (board_id) ON DELETE CASCADE)");
 

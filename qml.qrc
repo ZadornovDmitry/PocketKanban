@@ -22,5 +22,7 @@
         <file alias="Menu">icons/menu-button.png</file>
         <file alias="MoreMenu">icons/show-more-button-with-three-dots.png</file>
         <file>main_listview/widgets/MenuWidget.qml</file>
+        <file>board_listviews/dialogs/ColorChooseDialog.qml</file>
+        <file alias="Tick">icons/tick.png</file>
     </qresource>
 </RCC>
