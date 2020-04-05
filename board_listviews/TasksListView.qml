@@ -24,7 +24,7 @@ Rectangle {
 
         db.transaction(
                     function(tx) {
-                        var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = '"+taskType+"') order by priority");
+                        var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = '"+taskType+"') and board_id = (select board_id from ActiveBoard where id = 1) order by priority");
                         if (tasks.rows.length < listModel.count)
                             listModel.remove(0, listModel.count - tasks.rows.length);
                         for (var i = 0; i < tasks.rows.length; i++) {

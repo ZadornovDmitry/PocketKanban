@@ -12,6 +12,7 @@ import "widgets"
 Item{
     ListView{
         id: mainListView
+        signal boardChanged()
         anchors.fill: parent
         // this is header that disapear when scroling down and wise versa
         header: ToolBar
@@ -105,7 +106,8 @@ Item{
                                             var sql = "update ActiveBoard set board_id=" + boards_model.get(currentIndex).id + " where id = 1"
                                             tx.executeSql(sql);
                                         }
-                                        )
+                                        );
+                            mainListView.boardChanged();
                         }
                     }
                     // show when new board need to be ctreated
@@ -132,6 +134,7 @@ Item{
                                             )
                                 cb_boards.updateModel();
                                 window.dialogLoader_.sourceComponent = undefined
+                                mainListView.boardChanged();
                             }
                         }
                     }
@@ -220,6 +223,7 @@ Item{
     // it contains three boards with tasks(todo, do, done)
     Component{
         id: swipeDelegate
+
         SwipeViewDelegate{
             id:swipe
             contentHeigh: mainListView.height
@@ -247,6 +251,15 @@ Item{
                     itemAt(0).
                     innerObject.
                     listViewModel.count - 1;
+                }
+            }
+            Connections{
+                target: mainListView
+                onBoardChanged:
+                {
+                    for (var i=0; i< swipe.taskBoards.count; i++){
+                        swipe.taskBoards.itemAt(i).innerObject.needUpdate = true;
+                    }
                 }
             }
         }
