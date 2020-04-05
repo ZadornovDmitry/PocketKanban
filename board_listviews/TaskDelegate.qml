@@ -52,7 +52,7 @@ MouseArea {
                         }
                         )
             listModel.clear();
-            updateModelFunction(listModel);
+            updateModelFunction();
         }
         held = false;
     }

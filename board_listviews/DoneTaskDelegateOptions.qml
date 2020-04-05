@@ -22,27 +22,28 @@ Row{
     anchors.margins: 17
 
     IconItem{
-        imageSource: "qrc:/RightArrow"
+        imageSource: "qrc:/Download"
+        clickFunction: function() {
+
+        }
+    }
+    IconItem{
+        imageSource: "qrc:/BackArrow"
         clickFunction: function()
         {
             var db = CreateDatabase.getDatabase();
 
             db.transaction(
                         function(tx) {
-                            var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") + 1 where task_id = " +visualModel.items.get(index).model.id;
+                            var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") - 1 where task_id = " +visualModel.items.get(index).model.id;
                             tx.executeSql(query);
                             updateModelFunction(listModel);
                         }
-                        )
+                        );
+            dataChanged();
         }
     }
-    IconItem{
-        imageSource: "qrc:/Pencil"
-        clickFunction: function() {
-            taskName.readOnly = false;
-            taskName.forceActiveFocus();
-        }
-    }
+
     IconItem{
         imageSource: "qrc:/Bin"
         clickFunction: function()

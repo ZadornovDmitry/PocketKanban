@@ -54,11 +54,25 @@ Item{
             id: itemRepeater
             model:ListModel{id: repeaterModel}
             Item {
+                property alias innerObject: tasksListView
                 TasksListView
                 {
+                    id: tasksListView
                     anchors.fill: parent
                     taskType: type
                 }
+                Connections{
+                    target: tasksListView
+                    onDataChanged:{
+                        for (var i=0 ; i<itemRepeater.count; i++)
+                        {
+                            if (itemRepeater.itemAt(i) !== tasksListView){
+                                itemRepeater.itemAt(i).innerObject.needUpdate = true;
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }

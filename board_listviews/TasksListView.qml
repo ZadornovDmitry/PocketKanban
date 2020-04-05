@@ -12,18 +12,20 @@ Rectangle {
     id: root
 
     width: 300; height: 400
+    signal dataChanged();
     property string taskType: ""
+    property bool needUpdate: false
+    property var updateModelFunction: function (){
 
-    property var updateModelFunction: function (__model){
         var db = CreateDatabase.getDatabase();
 
         db.transaction(
                     function(tx) {
                         var tasks = tx.executeSql("select * from tasks where state_id = (select id from States where state = '"+taskType+"') order by priority");
-                        if (tasks.rows.length < __model.count)
-                            __model.remove(0, __model.count - tasks.rows.length);
+                        if (tasks.rows.length < listModel.count)
+                            listModel.remove(0, listModel.count - tasks.rows.length);
                         for (var i = 0; i < tasks.rows.length; i++) {
-                            __model.set(i,{
+                            listModel.set(i,{
                                             'value': tasks.rows.item(i).name,
                                             'priority': tasks.rows.item(i).priority,
                                             'id': tasks.rows.item(i).task_id,
@@ -32,10 +34,11 @@ Rectangle {
                         }
                     }
                     );
+
     }
 
+    onNeedUpdateChanged: {updateModelFunction(); needUpdate = false;}
 
-    onTaskTypeChanged: updateModelFunction(listModel)
 
     DelegateModel {
         id: visualModel
@@ -58,6 +61,6 @@ Rectangle {
         spacing: 20
         cacheBuffer: 50
 
-        Component.onCompleted: updateModelFunction(listModel)
+        Component.onCompleted: updateModelFunction()
     }
 }

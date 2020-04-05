@@ -33,14 +33,23 @@ Row{
                             tx.executeSql(query);
                             updateModelFunction(listModel);
                         }
-                        )
+                        );
+            dataChanged();
         }
     }
     IconItem{
-        imageSource: "qrc:/Pencil"
+        imageSource: "qrc:/BackArrow"
         clickFunction: function() {
-            taskName.readOnly = false;
-            taskName.forceActiveFocus();
+            var db = CreateDatabase.getDatabase();
+
+            db.transaction(
+                        function(tx) {
+                            var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") - 1 where task_id = " + visualModel.items.get(index).model.id;
+                            tx.executeSql(query);
+                            updateModelFunction(listModel);
+                        }
+                        );
+            dataChanged();
         }
     }
     IconItem{
@@ -67,7 +76,7 @@ Row{
             target: dialogLoader.item
             ignoreUnknownSignals: true
             onChoosenColor:{
-                if (index == view.currentIndex){
+                if (index === view.currentIndex){
                     dialogLoader.sourceComponent = undefined
                     //content.color = color
                     var db = CreateDatabase.getDatabase();

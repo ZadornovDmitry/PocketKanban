@@ -33,7 +33,8 @@ Row{
                             tx.executeSql(query);
                             updateModelFunction(listModel);
                         }
-                        )
+                        );
+            dataChanged();
         }
     }
     IconItem{
