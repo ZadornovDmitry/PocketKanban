@@ -229,6 +229,26 @@ Item{
                     addTaskBtn.state = swipe.tabBar.currentIndex==0?"":'ivisible';
                 }
             }
+            Connections{
+                target: addTaskBtn
+                onClicked:{
+                    swipe.taskBoards.
+                    itemAt(0).
+                    innerObject.
+                    listViewModel.append(
+                                {'value': ' ',
+                                 'taskColor': '#b2ebf2',
+                                    'id': 0
+                                }
+                                );
+                    swipe.taskBoards.
+                    itemAt(0).
+                    innerObject.tasksTable.currentIndex = swipe.taskBoards.
+                    itemAt(0).
+                    innerObject.
+                    listViewModel.count - 1;
+                }
+            }
         }
 
     }

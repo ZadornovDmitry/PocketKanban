@@ -40,8 +40,9 @@ Row{
     IconItem{
         imageSource: "qrc:/Pencil"
         clickFunction: function() {
-            taskName.readOnly = false;
-            taskName.forceActiveFocus();
+            dragArea.state = "EditMode"
+//            taskName.readOnly = false;
+//            taskName.forceActiveFocus();
         }
     }
     IconItem{
@@ -68,7 +69,7 @@ Row{
             target: dialogLoader.item
             ignoreUnknownSignals: true
             onChoosenColor:{
-                if (index == view.currentIndex){
+                if (index === view.currentIndex){
                     dialogLoader.sourceComponent = undefined
                     //content.color = color
                     var db = CreateDatabase.getDatabase();

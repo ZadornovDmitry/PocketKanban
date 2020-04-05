@@ -13,6 +13,9 @@ Rectangle {
 
     width: 300; height: 400
     signal dataChanged();
+    property alias listViewModel: listModel
+    property alias delegateModel: visualModel
+    property alias tasksTable: view
     property string taskType: ""
     property bool needUpdate: false
     property var updateModelFunction: function (){
@@ -49,6 +52,8 @@ Rectangle {
 
         }
         delegate: TaskDelegate{taskType: root.taskType}
+
+
     }
 
     ListView {

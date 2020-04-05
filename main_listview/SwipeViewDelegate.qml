@@ -8,6 +8,7 @@ import "../screepts/CreateDatabase.js" as CreateDatabase
 Item{
     property var contentHeigh: 0
     property alias tabBar:tabBar_
+    property alias taskBoards: itemRepeater
     width:parent.width
     height: swipeView.height
 

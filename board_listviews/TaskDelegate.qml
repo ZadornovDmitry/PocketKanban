@@ -14,6 +14,34 @@ MouseArea {
     property string taskType: ""
     property bool held: false
 
+
+    states:[
+        State {// state when clicked on delegate to show bootom buttons
+            name: "ShowOptions"
+        },
+        State {// when pencil button clicked to edit task name
+            name: "EditMode"
+            PropertyChanges {
+                target: taskName
+                readOnly: false
+            }
+        }
+    ]
+
+    state: ""
+// this timer runs when new task added to set active focus to text field with task name
+    // without it active focus doesnt set
+    Timer {
+        id: timer
+              interval: 10; running: false; repeat: false
+              onTriggered: state = "EditMode";
+          }
+
+    Component.onCompleted: {
+        // if its new task from pushing button '+' we have to open delegate and set active focus to text field with task name
+       if (id == 0)timer.start();
+    }
+
     function getOptionsItem(__taskType)
     {
         console.log(__taskType)
@@ -27,6 +55,7 @@ MouseArea {
             return "DoneTaskDelegateOptions.qml";
         }
     }
+
 
     anchors { left: parent.left; right: parent.right }
     height: content.height
@@ -61,20 +90,18 @@ MouseArea {
         target: view
         onCurrentIndexChanged:{
             if (view.currentIndex != index){
-                options_rect.state = "";
+                dragArea.state = "";
             }
         }
     }
 
     onClicked:
     {
-        taskName.forceActiveFocus();
         view.currentIndex = index;
-
-        if (options_rect.state == "")
-            options_rect.state = "visible";
+        if (dragArea.state == "")
+            dragArea.state = "ShowOptions";
         else
-            options_rect.state = "";
+            dragArea.state = "";
     }
 
     RectangularGlow {// shadow effect
@@ -116,7 +143,7 @@ MouseArea {
         Column {
             id: column
             anchors { fill: parent; margins: 10 }
-
+// Task name field
             TextField
             {
                 id: taskName
@@ -125,28 +152,53 @@ MouseArea {
                 font.pixelSize: height/5
                 background: null
                 verticalAlignment: Qt.AlignVCenter
-                readOnly: true
+                readOnly: dragArea.state != "EditMode"
+
+                onReadOnlyChanged: forceActiveFocus();
+
                 onPressed: {
                     view.currentIndex = index;
 
-                    if (options_rect.state == "")
-                        options_rect.state = "visible";
+                    if (dragArea.state == "")
+                        dragArea.state = "ShowOptions";
                     else
-                        options_rect.state = "";
+                        dragArea.state = "";
+
                 }
 
                 onEditingFinished: {
-
+                    if (!activeFocus) return;
                     var db = CreateDatabase.getDatabase();
 
-                    db.transaction(
-                                function(tx) {
-                                    var query = "update Tasks set name = '" + text + "' where task_id = " + visualModel.items.get(index).model.id;
-                                    tx.executeSql(query);
-                                }
-                                )
-                    readOnly = true;
 
+                    if (id == 0){
+                        if (text.length == 0){
+                            listModel.remove(listModel.count-1);
+                            return;
+                        }else{
+                            db.transaction(
+                                        function(tx) {
+                                            var query = "Insert  Into Tasks(name, board_id, state_id, color) values('" + text +"', (select board_id from ActiveBoard where id =1), (select id from States where state = 'TODO'), '"+taskColor+"')"
+
+                                            tx.executeSql(query);
+                                        }
+                                        )
+                            readOnly = true;
+                            updateModelFunction();
+                        }
+                    }else{
+
+                        if (text.length == 0) return;
+
+
+                        db.transaction(
+                                    function(tx) {
+                                        var query = "update Tasks set name = '" + text + "' where task_id = " + visualModel.items.get(index).model.id;
+                                        tx.executeSql(query);
+                                    }
+                                    )
+                        readOnly = true;
+                    }
                 }
             }
 
@@ -160,11 +212,10 @@ MouseArea {
                     [
                     State {
                         name: "visible"
-
+                        when: dragArea.state =="ShowOptions" || dragArea.state == "EditMode" || id == 0
                         PropertyChanges {
                             target: options_rect
                             height: taskName.height/2
-
                         }
                     }
                 ]
