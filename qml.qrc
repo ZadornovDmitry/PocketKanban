@@ -28,5 +28,6 @@
         <file>board_listviews/DoTaskDelegateOptions.qml</file>
         <file>board_listviews/DoneTaskDelegateOptions.qml</file>
         <file>board_listviews/TaskDelegate.qml</file>
+        <file>main_listview/widgets/TaskTabButton.qml</file>
     </qresource>
 </RCC>

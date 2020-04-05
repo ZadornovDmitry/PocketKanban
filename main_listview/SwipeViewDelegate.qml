@@ -1,8 +1,12 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.2
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.LocalStorage 2.12 as Sql
+import QtQuick.Controls.impl 2.12
+import QtQuick.Controls.Material 2.12
+
 import "../board_listviews"
+import "widgets"
 import "../screepts/CreateDatabase.js" as CreateDatabase
 
 Item{
@@ -19,17 +23,18 @@ Item{
         anchors.top: parent.top
         anchors.left: parent.left
 
-        TabButton {
-            text: qsTr("сделать")
-
+        TaskTabButton {
+           text: qsTr("сделать")
+           stateId: 1
         }
-        TabButton {
+        TaskTabButton {
+            stateId: 2
             text: qsTr("делаю")
         }
-        TabButton {
+        TaskTabButton {
+            stateId: 3
             text: qsTr("сделано")
         }
-
     }
 
     SwipeView {
@@ -56,12 +61,32 @@ Item{
             model:ListModel{id: repeaterModel}
             Item {
                 property alias innerObject: tasksListView
+                //signal listModelCountChanged(count)
                 TasksListView
                 {
                     id: tasksListView
                     anchors.fill: parent
                     taskType: type
                 }
+
+                Connections{
+                    target: tasksListView.listViewModel
+                    onCountChanged:{
+
+                        switch (tasksListView){
+                        case itemRepeater.itemAt(0).innerObject:
+                            tabBar_.itemAt(0).needUpdate = true;
+                            break;
+                        case itemRepeater.itemAt(1).innerObject:
+                            tabBar_.itemAt(1).needUpdate = true;
+                            break;
+                        case itemRepeater.itemAt(2).innerObject:
+                            tabBar_.itemAt(2).needUpdate = true;
+                            break;
+                        }
+                    }
+                }
+
                 Connections{
                     target: tasksListView
                     onDataChanged:{
@@ -73,7 +98,6 @@ Item{
                         }
                     }
                 }
-
             }
         }
     }
