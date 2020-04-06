@@ -31,7 +31,8 @@ Row{
                         function(tx) {
                             var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") + 1 where task_id = " +visualModel.items.get(index).model.id;
                             tx.executeSql(query);
-                            updateModelFunction(listModel);
+                            listModel.clear();
+                            updateModelFunction();
                         }
                         );
             dataChanged();
@@ -41,8 +42,6 @@ Row{
         imageSource: "qrc:/Pencil"
         clickFunction: function() {
             dragArea.state = "EditMode"
-//            taskName.readOnly = false;
-//            taskName.forceActiveFocus();
         }
     }
     IconItem{
@@ -55,9 +54,11 @@ Row{
                         function(tx) {
                             var query = "delete from Tasks where task_id = " + visualModel.items.get(index).model.id;
                             tx.executeSql(query);
-                            updateModelFunction(listModel);
+                            listModel.clear();
+                            updateModelFunction();
                         }
-                        )
+                        );
+            dataChanged();
         }
     }
     IconItem{
@@ -71,7 +72,7 @@ Row{
             onChoosenColor:{
                 if (index === view.currentIndex){
                     dialogLoader.sourceComponent = undefined
-                    //content.color = color
+
                     var db = CreateDatabase.getDatabase();
 
                     db.transaction(
@@ -80,7 +81,7 @@ Row{
                                     tx.executeSql(query);
                                 }
                                 );
-                    updateModelFunction(listModel);
+                    updateModelFunction();
                 }
             }
         }

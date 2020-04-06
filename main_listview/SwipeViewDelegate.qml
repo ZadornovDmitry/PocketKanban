@@ -70,9 +70,10 @@ Item{
                 }
 
                 Connections{
+                    id: connections
                     target: tasksListView.listViewModel
-                    onDataChanged:{
 
+                    function reactOnSignal(){
                         switch (tasksListView){
                         case itemRepeater.itemAt(0).innerObject:
                             tabBar_.itemAt(0).needUpdate = true;
@@ -85,6 +86,12 @@ Item{
                             break;
                         }
                     }
+                    // two signal need for correct work count indicators
+                    // when new task created its not added in base yet but count in list model emit signal
+                    // dataChange signal emits earlear the transaction done;
+                    onCountChanged: connections.reactOnSignal();
+                    // this signal for update count indicator when new task created
+                    onDataChanged: connections.reactOnSignal();
                 }
 
                 Connections{

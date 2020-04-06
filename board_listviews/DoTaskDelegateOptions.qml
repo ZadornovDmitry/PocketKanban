@@ -31,7 +31,8 @@ Row{
                         function(tx) {
                             var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") + 1 where task_id = " +visualModel.items.get(index).model.id;
                             tx.executeSql(query);
-                            updateModelFunction(listModel);
+                            listModel.clear();
+                            updateModelFunction();
                         }
                         );
             dataChanged();
@@ -46,7 +47,8 @@ Row{
                         function(tx) {
                             var query = "update Tasks set state_id = (select state_id from Tasks where task_id = " + visualModel.items.get(index).model.id + ") - 1 where task_id = " + visualModel.items.get(index).model.id;
                             tx.executeSql(query);
-                            updateModelFunction(listModel);
+                            listModel.clear();
+                            updateModelFunction();
                         }
                         );
             dataChanged();
@@ -62,9 +64,11 @@ Row{
                         function(tx) {
                             var query = "delete from Tasks where task_id = " + visualModel.items.get(index).model.id;
                             tx.executeSql(query);
-                            updateModelFunction(listModel);
+                            listModel.clear();
+                            updateModelFunction();
                         }
-                        )
+                        );
+            dataChanged();
         }
     }
     IconItem{
@@ -87,7 +91,7 @@ Row{
                                     tx.executeSql(query);
                                 }
                                 );
-                    updateModelFunction(listModel);
+                    updateModelFunction();
                 }
             }
         }
