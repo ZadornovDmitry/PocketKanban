@@ -25,7 +25,7 @@ TabButton {
         function(tx) {
             var tasks_ = tx.executeSql("select count(task_id) as taskCount from Tasks where board_id = (select board_id from ActiveBoard where id =1) and state_id = " + stateId);
             control.tasks = tasks_.rows.item(0).taskCount;
-
+            console.log("count " + tasks_.rows.item(0).taskCount);
         });
     }
 
@@ -33,6 +33,7 @@ TabButton {
         update();
         needUpdate = false;
     }
+    Component.onCompleted: update();
 
     text: qsTr("сделать")
     contentItem: IconLabel {

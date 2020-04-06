@@ -168,12 +168,16 @@ MouseArea {
 
                 onEditingFinished: {
                     if (!activeFocus) return;
+
                     var db = CreateDatabase.getDatabase();
 
 
                     if (id == 0){
-                        if (text.length == 0){
+
+                        if (text.trim().length == 0){
+
                             listModel.remove(listModel.count-1);
+
                             return;
                         }else{
                             db.transaction(
@@ -182,9 +186,12 @@ MouseArea {
 
                                             tx.executeSql(query);
                                         }
-                                        )
+                                        );
+                            dataChanged();
                             readOnly = true;
                             updateModelFunction();
+
+
                         }
                     }else{
 

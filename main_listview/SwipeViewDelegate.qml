@@ -71,7 +71,7 @@ Item{
 
                 Connections{
                     target: tasksListView.listViewModel
-                    onCountChanged:{
+                    onDataChanged:{
 
                         switch (tasksListView){
                         case itemRepeater.itemAt(0).innerObject:

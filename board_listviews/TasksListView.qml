@@ -28,6 +28,7 @@ Rectangle {
                         if (tasks.rows.length < listModel.count)
                             listModel.remove(0, listModel.count - tasks.rows.length);
                         for (var i = 0; i < tasks.rows.length; i++) {
+
                             listModel.set(i,{
                                             'value': tasks.rows.item(i).name,
                                             'priority': tasks.rows.item(i).priority,
@@ -66,6 +67,6 @@ Rectangle {
         spacing: 20
         cacheBuffer: 50
 
-        Component.onCompleted: updateModelFunction()
+        Component.onCompleted: {updateModelFunction(); dataChanged();}
     }
 }
